@@ -68,7 +68,7 @@ class Constant(Expression):
     def __div__(self, other):
         return Constant(self.k * other.k)
     
-class MultipliedBy(Expression):
+class Multiply(Expression):
     def __init__(self, a,b) -> None:
         super().__init__()
 
@@ -81,7 +81,7 @@ class MultipliedBy(Expression):
     
     
     def derivative(self) -> Type[Expression]:
-        return Add(MultipliedBy(self.a.derivative(), self.b), MultipliedBy(self.a, self.b.derivative()))
+        return Add(Multiply(self.a.derivative(), self.b), Multiply(self.a, self.b.derivative()))
     
     def __repr__(self):
         return f"({self.a.__repr__()} * {self.b.__repr__()})"
@@ -93,9 +93,9 @@ class MultipliedBy(Expression):
         if isinstance(self.a, Constant) and self.a.k == 0.0 or isinstance(self.b, Constant) and self.b.k == 0.0:
             return Constant(0.0)
 
-        return MultipliedBy(self.a.simplify(), self.b.simplify())
+        return Multiply(self.a.simplify(), self.b.simplify())
 
-class DividedBy(Expression):
+class Divide(Expression):
     def __init__(self, a,b) -> None:
         super().__init__()
 
@@ -108,7 +108,7 @@ class DividedBy(Expression):
     
     
     def derivative(self) -> Type[Expression]:
-        return DividedBy(Subtract(MultipliedBy(self.a.derivative(), self.b), MultipliedBy(self.a, self.b.derivative())), PolynomialExponent(2, self.b))
+        return Divide(Subtract(Multiply(self.a.derivative(), self.b), Multiply(self.a, self.b.derivative())), PolynomialExponent(2, self.b))
     
     def __repr__(self):
         return f"({self.a.__repr__()} / {self.b.__repr__()})"
@@ -119,7 +119,7 @@ class DividedBy(Expression):
         if isinstance(self.a, Constant) and isinstance(self.b, Constant):
             return Constant(self.a / self.b).simplify()
 
-        return DividedBy(self.a.simplify(), self.b.simplify())
+        return Divide(self.a.simplify(), self.b.simplify())
 
 class Add(Expression):
     def __init__(self, a,b) -> None:
@@ -187,7 +187,7 @@ class PolynomialExponent(Expression):
     
     
     def derivative(self) -> Type[Expression]:
-        return MultipliedBy(self.exponent, PolynomialExponent(self.exponent - 1))
+        return Multiply(self.exponent, Multiply(self.baseExpression.derivative(), PolynomialExponent(self.exponent - 1, self.baseExpression)))
     
     def __repr__(self):
         return f"({self.baseExpression.__repr__()} ^ {self.exponent.__repr__()})"
@@ -211,7 +211,7 @@ class EToTheF(Expression):
     
     
     def derivative(self) -> Type[Expression]:
-        return MultipliedBy(self.f, self)
+        return Multiply(self.f, self)
     
     def __repr__(self):
         return "e^X"
@@ -224,7 +224,7 @@ class EToTheF(Expression):
 
 
 if __name__ == "__main__":
-    expr = DividedBy(Constant(1), X())
+    expr = Divide(Constant(1), X())
 
     print(expr.derivative()(1))
     print(expr.derivative().simplify())
