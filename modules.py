@@ -138,6 +138,12 @@ class Multiply(Expression):
         
         if isinstance(self.a, Constant) and self.a.k == 0.0 or isinstance(self.b, Constant) and self.b.k == 0.0:
             return Constant(0.0)
+        
+        if isinstance(self.a, Constant) and self.a.k == 1.0 : # 1 * b
+            return self.b
+        
+        if isinstance(self.b, Constant) and self.b.k == 1.0 : # a * 1
+            return self.a
 
         return Multiply(self.a.simplify(), self.b.simplify())
 
@@ -165,6 +171,11 @@ class Divide(Expression):
         self.b = self.b.simplify()
         if isinstance(self.a, Constant) and isinstance(self.b, Constant):
             return Constant(self.a / self.b).simplify()
+        
+        if isinstance(self.b, Constant) and self.b.k == 1.0 : #f(x)/1
+            return self.a
+        
+        
 
         return Divide(self.a.simplify(), self.b.simplify())
 
