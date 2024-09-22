@@ -12,5 +12,8 @@ Csc = Composite.fromFunctional(Divide(1,Sin(X)), "Csc")
 if __name__ == "__main__":
     expr = Tan(X())
 
+    print(expr)
+
     print(expr.derivative()(1))
-    print(expr.derivative().simplify())
+
+    print(expr.derivative().simplify()) # messy bc derived from quotient rule

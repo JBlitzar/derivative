@@ -36,7 +36,7 @@ class Composite(Expression):
         return Multiply(Composite(self.f.derivative(),self.g),self.g.derivative())
     
     def __repr__(self):
-        return f"[({self.f}) of ({self.g})]"
+        return f"[({self.f.__repr__()}) of ({self.g.__repr__()})]"
     
     def simplify(self):
         return self
@@ -56,7 +56,7 @@ class Composite(Expression):
                 return Multiply(Composite(func.derivative(), (self.inner_expr).simplify()), self.inner_expr.derivative().simplify())
             
             def __repr__(self) -> str:
-                return f"{name}({self.inner_expr})"
+                return f"{name}({self.inner_expr.__repr__()})"
 
         return CompositeExpression
     
@@ -74,7 +74,8 @@ class X(Expression):
     def derivative() -> Type[Expression]:
         return Constant(1)
     
-    def __repr__(self):
+    @staticmethod
+    def __repr__():
         return "X"
     
     def simplify(self):
