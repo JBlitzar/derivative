@@ -12,7 +12,7 @@ Csc = Composite.fromFunctional(Divide(1,Sin(X)), "Csc")
 Inverse = Composite.fromFunctional(Divide(1,X), "Inverse")
 Square = Composite.fromFunctional(Multiply(X,X), "Inverse")
 
-Log10 = Composite.fromFunctional(Divide(Ln(X),Constant(Ln(10)())), "Log10")
+Log10 = Composite.fromFunctional(Divide(Ln(X),Constant(Ln(Constant(10))(Constant(0)))), "Log10")
 
 if __name__ == "__main__":
     expr = Tan(X())
