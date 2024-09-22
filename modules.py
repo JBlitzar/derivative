@@ -1,4 +1,4 @@
-from typing import Type
+from typing import Type, Callable
 import math
 
 class Expression:
@@ -17,7 +17,52 @@ class Expression:
     def __repr__(self):
         return "Expression"
     
+
+
     
+    
+class Composite(Expression):
+    def __init__(self,f,g) -> None:
+        super().__init__()
+
+        self.f = f
+        self.g = g
+
+    def __call__(self, x: float) -> float:
+        return self.f(self.g(x))
+    
+    
+    def derivative(self) -> Type[Expression]:
+        return Multiply(Composite(self.f.derivative(),self.g),self.g.derivative())
+    
+    def __repr__(self):
+        return f"[({self.f}) of ({self.g})]"
+    
+    def simplify(self):
+        return self
+    
+    @classmethod
+    def fromFunctional(cls, func: Expression, name: str = "CompositeExpression") -> Type["Expression"]:
+        class CompositeExpression(Expression):
+            def __init__(self, inner_expr: Expression) -> None:
+                super().__init__()
+                self.inner_expr = inner_expr
+
+            def __call__(self, x: float) -> float:
+
+                return func(self.inner_expr)(x)
+            
+            def derivative(self) -> "Expression":
+                return Multiply(Composite(func.derivative(), (self.inner_expr).simplify()), self.inner_expr.derivative().simplify())
+            
+            def __repr__(self) -> str:
+                return f"{name}({self.inner_expr})"
+
+        return CompositeExpression
+    
+
+
+
 class X(Expression):
     def __init__(self) -> None:
         super().__init__()
@@ -25,8 +70,8 @@ class X(Expression):
     def __call__(self, x: float) -> float:
         return x
     
-    
-    def derivative(self) -> Type[Expression]:
+    @staticmethod
+    def derivative() -> Type[Expression]:
         return Constant(1)
     
     def __repr__(self):
@@ -95,6 +140,7 @@ class Multiply(Expression):
 
         return Multiply(self.a.simplify(), self.b.simplify())
 
+
 class Divide(Expression):
     def __init__(self, a,b) -> None:
         super().__init__()
@@ -108,7 +154,7 @@ class Divide(Expression):
     
     
     def derivative(self) -> Type[Expression]:
-        return Divide(Subtract(Multiply(self.a.derivative(), self.b), Multiply(self.a, self.b.derivative())), PolynomialExponent(2, self.b))
+        return Divide(Subtract(Multiply(self.a.derivative(), self.b), Multiply(self.a, self.b.derivative())), Multiply(self.b, self.b))
     
     def __repr__(self):
         return f"({self.a.__repr__()} / {self.b.__repr__()})"
@@ -174,53 +220,6 @@ class Subtract(Expression):
 
         return Subtract(self.a, self.b)
 
-class PolynomialExponent(Expression):
-    def __init__(self, exponent: float, baseExpression: Expression = X) -> None:
-        super().__init__()
-
-
-        self.exponent = exponent
-        self.baseExpression = baseExpression
-
-    def __call__(self, x: float) -> float:
-        return  self.baseExpression(x) ** self.exponent
-    
-    
-    def derivative(self) -> Type[Expression]:
-        return Multiply(self.exponent, Multiply(self.baseExpression.derivative(), PolynomialExponent(self.exponent - 1, self.baseExpression)))
-    
-    def __repr__(self):
-        return f"({self.baseExpression.__repr__()} ^ {self.exponent.__repr__()})"
-    
-
-    def simplify(self):
-        self.baseExpression = self.baseExpression.simplify()
-        if isinstance(self.baseExpression, Constant):
-            return Constant(self.baseExpression ** self.exponent).simplify()
-
-        return PolynomialExponent(self.exponent, self.baseExpression.simplify())
-    
-class EToTheF(Expression):
-    def __init__(self, f: Expression = X) -> None:
-        super().__init__()
-
-        self.f = f
-
-    def __call__(self, x: float) -> float:
-        return math.e ** self.f(x)
-    
-    
-    def derivative(self) -> Type[Expression]:
-        return Multiply(self.f, self)
-    
-    def __repr__(self):
-        return "e^X"
-    
-    def simplify(self):
-        if isinstance(self.f, Constant) :
-            return Constant(math.e ** self.exponent).simplify()
-
-        return EToTheF(self.f.simplify())
 
 
 if __name__ == "__main__":
