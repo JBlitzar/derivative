@@ -9,6 +9,10 @@ Sec = Composite.fromFunctional(Divide(1,Cos(X)), "Sec")
 Csc = Composite.fromFunctional(Divide(1,Sin(X)), "Csc")
 
 
+Inverse = Composite.fromFunctional(Divide(1,X), "Inverse")
+Square = Composite.fromFunctional(Multiply(X,X), "Inverse")
+
+
 if __name__ == "__main__":
     expr = Tan(X())
 

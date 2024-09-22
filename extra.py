@@ -43,15 +43,68 @@ class EToTheF(Expression):
         return Multiply(self.f, self)
     
     def __repr__(self):
-        return "e^X"
+        return f"e^{self.f}"
     
     def simplify(self):
         if isinstance(self.f, Constant) :
             return Constant(math.e ** self.exponent).simplify()
 
         return EToTheF(self.f.simplify())
-    
+class Ln(Expression):
+    def __init__(self, f: Expression = X) -> None:
+        super().__init__()
 
+        self.f = f
+
+    def __call__(self, x: float) -> float:
+        return math.log(self.f(x))
+    
+    
+    def derivative(self) -> Type[Expression]:
+        return Multiply(Divide(1,self.f), self.f.derivative())
+    
+    def __repr__(self):
+        return f"ln({self.f})"
+    
+    def simplify(self):
+        if isinstance(self.f, Constant) :
+            return Constant(math.log(self.f.k)).simplify()
+
+        return Ln(self.f.simplify())
+
+
+class FToTheG(Expression):
+    def __init__(self, f: Expression = X, g: Expression = X) -> None:
+        super().__init__()
+
+        self.f = f
+        self.g = g
+
+    def __call__(self, x: float) -> float:
+        return self.f(x) ** self.g(x)
+    
+    #https://www.wolframalpha.com/input?i=derivative+f%28x%29%5Eg%28x%29
+    def derivative(self) -> Type[Expression]:
+        f_deriv = self.f.derivative()
+        g_deriv = self.g.derivative()
+        
+        # Construct the derivative using the formula
+        first_term = Multiply(self.g, f_deriv)  # g(x) f'(x)
+        second_term = Multiply(Multiply(self.f, Ln(self.f)), g_deriv)  # f(x) log(f(x)) g'(x)
+        inner_derivative = Add(first_term, second_term)  # g(x) f'(x) + f(x) log(f(x)) g'(x)
+        
+        # Outer derivative part is f(x)^(g(x) - 1)
+        outer_derivative = PolynomialExponent(self.g - 1, self.f)
+        
+        # Full derivative: f(x)^(g(x) - 1) * (g(x) f'(x) + f(x) log(f(x)) g'(x))
+        return Multiply(outer_derivative, inner_derivative)
+    
+    def __repr__(self):
+        return f"{self.f} of ({self.g} of (x))"
+    
+    def simplify(self):
+        return self
+   
 
 class Sin(Expression):
     def __init__(self, f: Expression = X) -> None:
