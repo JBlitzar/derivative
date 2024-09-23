@@ -49,8 +49,11 @@ class Composite(Expression):
                 self.inner_expr = inner_expr
 
             def __call__(self, x: float) -> float:
-
-                return func(self.inner_expr)(x)
+                print(func)
+                print("funk")
+                return func(
+                    self.inner_expr(x)
+                )#(x)
             
             def derivative(self) -> "Expression":
                 return Multiply(Composite(func.derivative(), (self.inner_expr).simplify()), self.inner_expr.derivative().simplify())
@@ -64,8 +67,9 @@ class Composite(Expression):
 
 
 class X(Expression):
-    def __init__(self) -> None:
+    def __init__(self, *args) -> None:
         super().__init__()
+
 
     def __call__(self, x: float) -> float:
         return x
@@ -78,8 +82,9 @@ class X(Expression):
     def __repr__():
         return "X"
     
-    def simplify(self):
-        return self
+    @classmethod
+    def simplify(cls):
+        return cls()
 
 class Constant(Expression):
     def __init__(self, k: float) -> None:
@@ -123,6 +128,10 @@ class Multiply(Expression):
         self.b = b
 
     def __call__(self, x: float) -> float:
+        print(self.a)
+        print(self.a(x))
+        print(x)
+        print("a ax x")
         return self.a(x) * self.b(x)
     
     

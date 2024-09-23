@@ -5,12 +5,12 @@ from extra import *
 
 Tan = Composite.fromFunctional(Divide(Sin(X),Cos(X)), "Tan")
 Cot = Composite.fromFunctional(Divide(Cos(X),Sin(X)), "Cot")
-Sec = Composite.fromFunctional(Divide(1,Cos(X)), "Sec")
-Csc = Composite.fromFunctional(Divide(1,Sin(X)), "Csc")
+Sec = Composite.fromFunctional(Divide(Constant(1),Cos(X)), "Sec")
+Csc = Composite.fromFunctional(Divide(Constant(1),Sin(X)), "Csc")
 
 
-Inverse = Composite.fromFunctional(Divide(1,X), "Inverse")
-Square = Composite.fromFunctional(Multiply(X,X), "Inverse")
+Inverse = Composite.fromFunctional(Divide(Constant(1),X), "Inverse")
+Square = Composite.fromFunctional(Multiply(X(),X()), "Inverse")
 
 Log10 = Composite.fromFunctional(Divide(Ln(X),Constant(Ln(Constant(10))(Constant(0)))), "Log10")
 

@@ -36,11 +36,11 @@ class EToTheF(Expression):
         self.f = f
 
     def __call__(self, x: float) -> float:
-        return math.e ** self.f(x)
+        return math.exp(self.f(x))
     
     
     def derivative(self) -> Type[Expression]:
-        return Multiply(self.f, self)
+        return Multiply(self.f.derivative(), self)
     
     def __repr__(self):
         return f"e^{self.f}"
@@ -61,7 +61,7 @@ class Ln(Expression):
     
     
     def derivative(self) -> Type[Expression]:
-        return Multiply(Divide(1,self.f), self.f.derivative())
+        return Multiply(Divide(Constant(1),self.f), self.f.derivative())
     
     def __repr__(self):
         return f"ln({self.f})"
@@ -94,7 +94,7 @@ class FToTheG(Expression):
         inner_derivative = Add(first_term, second_term)  # g(x) f'(x) + f(x) log(f(x)) g'(x)
         
         # Outer derivative part is f(x)^(g(x) - 1)
-        outer_derivative = PolynomialExponent(self.g - 1, self.f)
+        outer_derivative = FToTheG(Subtract(self.g, Constant(1)), self.f)
         
         # Full derivative: f(x)^(g(x) - 1) * (g(x) f'(x) + f(x) log(f(x)) g'(x))
         return Multiply(outer_derivative, inner_derivative)
