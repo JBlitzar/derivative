@@ -4,7 +4,7 @@ import math
 
 
 class PolynomialExponent(Expression):
-    def __init__(self, exponent: float, baseExpression: Expression = X) -> None:
+    def __init__(self, exponent: Constant, baseExpression: Expression = X) -> None:
         super().__init__()
 
 
@@ -12,11 +12,11 @@ class PolynomialExponent(Expression):
         self.baseExpression = baseExpression
 
     def __call__(self, x: float) -> float:
-        return  self.baseExpression(x) ** self.exponent
+        return  self.baseExpression(x) ** self.exponent.k
     
     
     def derivative(self) -> Type[Expression]:
-        return Multiply(self.exponent, Multiply(self.baseExpression.derivative(), PolynomialExponent(self.exponent - 1, self.baseExpression)))
+        return Multiply(self.exponent, Multiply(self.baseExpression.derivative(), PolynomialExponent(self.exponent - Constant(1), self.baseExpression)))
     
     def __repr__(self):
         return f"({self.baseExpression.__repr__()} ^ {self.exponent.__repr__()})"

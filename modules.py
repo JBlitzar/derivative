@@ -128,10 +128,10 @@ class Multiply(Expression):
         self.b = b
 
     def __call__(self, x: float) -> float:
-        print(self.a)
-        print(self.a(x))
-        print(x)
-        print("a ax x")
+        # print(self.a)
+        # print(self.a(x))
+        # print(x)
+        # print("a ax x")
         return self.a(x) * self.b(x)
     
     

@@ -6,7 +6,10 @@ from compositions import *
 
 
 if __name__ == "__main__":
-    expr = Add(EToTheF(X()), Multiply(Constant(-2),X()))
+    expr = PolynomialExponent(Constant(2),X())
+
+    print(expr.derivative().simplify())
 
     print(expr.derivative()(1))
-    print(expr.derivative().simplify())
+    
+    
