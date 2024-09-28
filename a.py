@@ -1,6 +1,3 @@
-from modules import *
-from extra import *
-from compositions import *
 class Parameter:
     def __init__(self, value: float) -> None:
         self.value = value  # The value of the parameter (the actual number)
@@ -69,22 +66,26 @@ class Parameter:
     def zero_grad(self) -> None:
         self._grad = 0.0
 
-class Linear():
-    def __init__(self, weight: Parameter, bias: Parameter) -> None:
-        super().__init__()
-        self.weight = weight
-        self.bias = bias
+# Example usage
+if __name__ == "__main__":
+    # Example of a simple forward pass with two parameters
+    w = Parameter(2.0)
+    x = Parameter(3.0)
+    b = Parameter(1.0)
 
-    def __call__(self, x: float) -> float:
-        return self.weight * x + self.bias  # w*x + b
-    
-class MSELoss():
-    def __init__(self, prediction: Parameter, target: float) -> None:
-        super().__init__()
-        self.prediction = prediction
-        self.target = target
+    # Forward pass: y = w * x + b
+    y = w * x + b
 
-    def __call__(self, x: float) -> float:
-        return (self.prediction - self.target) ** 2
+    print(f"Forward: y = {y.value}")  # Expected: 2 * 3 + 1 = 7
 
+    # Backward pass: compute gradients w.r.t w, x, b
+    y.backward()  # Starting from dL/dy = 1
 
+    print(f"Gradient w.r.t w: {w._grad}")  # Expected: dL/dw = x = 3
+    print(f"Gradient w.r.t x: {x._grad}")  # Expected: dL/dx = w = 2
+    print(f"Gradient w.r.t b: {b._grad}")  # Expected: dL/db = 1
+
+    # Reset gradients for the next iteration
+    w.zero_grad()
+    x.zero_grad()
+    b.zero_grad()
