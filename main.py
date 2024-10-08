@@ -6,7 +6,7 @@ from compositions import *
 
 
 if __name__ == "__main__":
-    expr = PolynomialExponent(Constant(2),X())
+    expr = Multiply(Square(X()),EToTheF(Multiply(Constant(2),X())))
 
     print(expr.derivative().simplify())
 
