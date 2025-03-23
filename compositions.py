@@ -10,15 +10,16 @@ Csc = Composite.fromFunctional(Divide(Constant(1),Sin(X)), "Csc")
 
 
 Inverse = Composite.fromFunctional(Divide(Constant(1),X), "Inverse")
-Square = Composite.fromFunctional(Multiply(X(),X()), "Inverse")
+Square = Composite.fromFunctional(Multiply(X(),X()), "Square")
 
 Log10 = Composite.fromFunctional(Divide(Ln(X),Constant(Ln(Constant(10))(Constant(0)))), "Log10")
 
 if __name__ == "__main__":
-    expr = Tan(X())
+    expr = Log10(Sin(Square(X())))
 
     print(expr)
+    print("Log10(Sin(Multiply(X(),X())))")
 
-    print(expr.derivative()(1))
+    #print(expr.derivative()(1))
 
     print(expr.derivative().simplify()) # messy bc derived from quotient rule

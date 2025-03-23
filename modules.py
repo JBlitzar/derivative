@@ -82,6 +82,10 @@ class X(Expression):
     def __repr__():
         return "X"
     
+    @staticmethod
+    def __str__():
+        return "X"
+    
     @classmethod
     def simplify(cls):
         return cls()
